@@ -7,7 +7,8 @@ var con = mysql.createConnection({
   database: "vendingmachine"
 });
 
-module.exports.preparaBD = function(){
+module.exports.conexao = con
+module.exports.preparaBD = function() {
 
   con.connect(function(err) {
     if (err) throw err;
@@ -38,28 +39,24 @@ module.exports.preparaBD = function(){
   });
 }
 
-module.exports.listaProdutos = function(){
+module.exports.findAllProdutos = function(retorno, response){
   console.log("Vou te mostrar os produtos disponíveis");
-  let produtos = []
-  con.connect(function(err){
+
+  con.connect(function(err) {
     if (err) throw err;
 
-    con.query("SELECT * FROM produto",function(err, result, fields){
+    con.query("SELECT * FROM produto", function(err, result, fields) {
       if (err) throw err;
 
-      result.forEach((row) => {
-        produtos.push(row)
-      })
-      con.end(function(err){
+      retorno(result, response)
+
+      con.end(function(err) {
         if (err) throw err;
-        console.log("Connection closed!")
       });
 
     });
 
   });
-  return produtos
-
 }
 
 module.exports.realizarCompra = function(){

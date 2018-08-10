@@ -26,13 +26,10 @@ let criarBD = function(){
 api.use(bodyParser.urlencoded({ extended: false }))
 
 api.get('/', (req,res) => {
-  console.log("There's somebody here!\n\n")
-  let produtos = dbConnection.listaProdutos();
-  console.log(produtos)
-  for (let i in produtos){
-    console.log("Nome: " + produtos[i].nome + " Valor: " + produtos[i].valor + " Quantidade: " + produtos[i].quantidade);
+  let retorno = (produtos, res) => {
+    res.send(produtos)
   }
-  res.send('<h1>PRODUTOS</h1>')
+  dbConnection.findAllProdutos(retorno, res)
 })
 
 api.route('/contato')
