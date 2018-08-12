@@ -1,6 +1,7 @@
 // console.log("\n\n\n\n\nHello world!")
 let readline = require('readline')
 let express = require('express')
+let cors = require('cors')
 let bodyParser = require('body-parser')
 let dbConnection = require('./db-connection')
 
@@ -24,33 +25,25 @@ let criarBD = function(){
 }
 
 api.use(bodyParser.urlencoded({ extended: false }))
+api.use(bodyParser.json())
+api.use(cors())
 
-api.get('/', (req,res) => {
-  let retorno = (produtos, res) => {
-    res.send(produtos)
+api.get('/api/produtos', (req,res) => {
+  let retorno = (produtos) => {
+    res.status(200).send(produtos)
   }
-  dbConnection.findAllProdutos(retorno, res)
+  dbConnection.findAllProdutos(retorno)
 })
 
-api.route('/contato')
-  .get(function (req, res) {
-  console.log("Agora tem alguem em GET /contato")
-  res.send(`
-      <h1>Contato</h1>
-      <form action="/contato" method="POST">
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email">
-        <label for="mensagem">Mensagem:</label>
-        <input type="text" name="mensagem" id="mensagem"></input>
-        <input type="submit" value="Enviar">
-      </form>
-    `)
-  })
+api.route('/api/comprar')
   .post(function (req, res) {
-    console.log("Recebi um POST em /contato")
+    console.log("Enviando compra")
     console.log(req.body)
-//    let usr = req.body
-    res.send('<h3>Ser&aacute;?</h3>')
+    let compra = req.body
+    let retorno = (status, msg) => {
+      res.status(status).send(msg)
+    }
+    dbConnection.realizarCompra(compra.cartao, compra.produto, retorno)
   })
 
 api.listen(port, () => {
